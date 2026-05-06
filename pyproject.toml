@@ -1,0 +1,33 @@
+[project]
+name = "hmi-demo"
+version = "0.1.0"
+description = "Gesture-arbitrated UR5e MuJoCo demo (MVP)"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "mujoco>=3.2.0",
+    "mediapipe>=0.10.21,<0.11",
+    "opencv-python>=4.10",
+    "PyQt6>=6.7",
+    "numpy>=1.26,<2",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+hmi-demo = "hmi_demo.app:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hmi_demo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

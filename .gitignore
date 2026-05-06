@@ -1,0 +1,38 @@
+# brainstorming spec 不入 git
+docs/superpowers/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# uv
+.uv/
+uv.lock
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# MuJoCo offscreen / logs
+*.log
+mujoco_log.txt
+
+# Local config overrides
+configs/*.local.yaml

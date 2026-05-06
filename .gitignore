@@ -36,3 +36,6 @@ mujoco_log.txt
 
 # Local config overrides
 configs/*.local.yaml
+
+# vendored model zoo (cloned via Task 2 of plan)
+assets/mujoco_menagerie/

@@ -12,7 +12,7 @@ trajectory:
 
 ik:
   damping: 0.05
-  kp: 2.0
+  kp: 0.5
 
 camera:
   device: 0

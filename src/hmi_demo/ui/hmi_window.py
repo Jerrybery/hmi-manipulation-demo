@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from enum import Enum, auto
 
 import numpy as np
@@ -19,6 +20,8 @@ from hmi_demo.sim.ik import diff_ik_dls
 from hmi_demo.sim.trajectory import CircleTrajectory
 from hmi_demo.sim.world import World
 from hmi_demo.ui.render import MujocoRenderer
+
+_LOG = logging.getLogger(__name__)
 
 
 class MotionState(Enum):
@@ -115,7 +118,7 @@ class HMIWindow(QMainWindow):
                 self.world.model, self.world.data, self.world.ee_site_id, x_target,
                 damping=self.cfg.ik.damping, kp=self.cfg.ik.kp,
             )
-        else:  # RETURN_HOME
+        else:
             self._return_progress = min(
                 1.0,
                 self._return_progress + self._dt_outer / self.cfg.recovery.return_duration_s,
@@ -132,9 +135,19 @@ class HMIWindow(QMainWindow):
         try:
             qimg = self.renderer.grab(self.world.data)
             self.sim_label.setPixmap(QPixmap.fromImage(qimg))
-        except Exception as e:
+        except RuntimeError as exc:
+            _LOG.error("MuJoCo renderer failed: %s", exc, exc_info=True)
             self.timer.stop()
-            QMessageBox.critical(self, "Render error", str(e))
+            # Defer the dialog out of the timer callback to avoid event-loop re-entrancy.
+            QTimer.singleShot(
+                0,
+                lambda: QMessageBox.critical(
+                    self,
+                    "Render error",
+                    "The simulation renderer encountered an error and has been stopped.\n\n"
+                    f"Detail: {exc}\n\nPlease restart the application.",
+                ),
+            )
             return
 
         if self.state != prev_state:
@@ -160,12 +173,8 @@ class HMIWindow(QMainWindow):
         self.status.showMessage(label)
 
     def _on_gesture(self, raised: bool, frame):
-        from PyQt6.QtGui import QPixmap
-        prev_state = self.state
         self.gesture_frozen = raised
         self.cam_label.setPixmap(QPixmap.fromImage(frame))
-        if self.state != prev_state or raised != getattr(self, "_last_gesture_logged", None):
-            self._last_gesture_logged = raised
 
     def _on_camera_error(self, msg: str):
         self.cam_label.setText(f"NO CAMERA\n{msg}")
@@ -181,9 +190,13 @@ class HMIWindow(QMainWindow):
         super().keyPressEvent(event)
 
     def closeEvent(self, event):
-        self.timer.stop()
+        if hasattr(self, "timer"):
+            self.timer.stop()
         if hasattr(self, "vision_thread"):
             self.vision_thread.request_stop()
-            self.vision_thread.wait(2000)
-        self.renderer.close()
+            finished = self.vision_thread.wait(2000)
+            if not finished:
+                _LOG.warning("VisionThread did not stop within 2s; camera may not be released cleanly")
+        if hasattr(self, "renderer"):
+            self.renderer.close()
         super().closeEvent(event)

@@ -10,13 +10,12 @@ FINGER_MCPS = (5, 9, 13, 17)
 
 
 def is_palm_facing_camera(landmarks: np.ndarray, handedness: str) -> bool:
-    """True iff the palm normal points toward the camera (-z in MediaPipe convention).
+    """True iff the palm normal points toward the camera.
 
     Computes the palm-plane normal from wrist, index_mcp, pinky_mcp and flips
     sign per handedness so both hands' palms-facing-camera give the same result.
+    Caller must pass the user's real-world handedness (post-flip if applicable).
     """
-    if landmarks.shape[0] < 21:
-        return False
     wrist = landmarks[WRIST]
     v_index = landmarks[INDEX_MCP] - wrist
     v_pinky = landmarks[PINKY_MCP] - wrist
@@ -31,8 +30,6 @@ def is_open_hand(landmarks: np.ndarray) -> bool:
     Excludes thumb (index 4) because the thumb's MCP relationship is geometrically
     different and can be ambiguous when the hand rotates.
     """
-    if landmarks.shape[0] < 21:
-        return False
     wrist = landmarks[WRIST]
     for tip, mcp in zip(FINGERTIPS, FINGER_MCPS):
         d_tip = np.linalg.norm(landmarks[tip] - wrist)
@@ -43,8 +40,6 @@ def is_open_hand(landmarks: np.ndarray) -> bool:
 
 
 class HysteresisFilter:
-    """N-consecutive-frames latch. Output toggles only after `hold_frames` of agreement."""
-
     def __init__(self, hold_frames: int = 5):
         if hold_frames < 1:
             raise ValueError("hold_frames must be >= 1")

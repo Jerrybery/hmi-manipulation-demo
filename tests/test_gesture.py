@@ -8,12 +8,7 @@ from hmi_demo.utils.gesture import (
 
 
 def _open_palm_facing_camera_landmarks() -> np.ndarray:
-    """21 MediaPipe hand landmarks for an open right hand facing the camera.
-
-    MediaPipe coordinate convention used here: x right, y down, z toward camera (negative).
-    Layout chosen so the cross product (index_mcp - wrist) x (pinky_mcp - wrist)
-    points toward -z (camera) for a right hand with palm facing camera.
-    """
+    """21-landmark array for an open right hand with palm facing the camera, in the XY plane."""
     lm = np.zeros((21, 3))
     lm[0] = [0.5, 0.7, 0.0]   # wrist
     lm[1] = [0.45, 0.65, 0.0]  # thumb_cmc
@@ -46,7 +41,6 @@ def test_palm_facing_camera_open_hand_right_returns_true():
 
 def test_palm_facing_camera_left_hand_mirrored_returns_true():
     lm = _open_palm_facing_camera_landmarks()
-    # mirror x to simulate left hand mirrored
     lm_left = lm.copy()
     lm_left[:, 0] = 1.0 - lm_left[:, 0]
     assert is_palm_facing_camera(lm_left, handedness="Left") is True
@@ -54,7 +48,6 @@ def test_palm_facing_camera_left_hand_mirrored_returns_true():
 
 def test_palm_facing_back_of_hand_returns_false():
     lm = _open_palm_facing_camera_landmarks()
-    # flip x ordering: pinky on the same side as index → cross product flips
     lm_flipped = lm.copy()
     pinky_indices = list(range(17, 21))
     index_indices = list(range(5, 9))
@@ -72,7 +65,6 @@ def test_open_hand_true_when_fingertips_far():
 
 def test_open_hand_false_for_fist():
     lm = _open_palm_facing_camera_landmarks()
-    # collapse fingertips toward wrist → fist
     for tip_idx in (8, 12, 16, 20):
         lm[tip_idx] = lm[0] + 0.01 * (lm[tip_idx] - lm[0])
     assert is_open_hand(lm) is False

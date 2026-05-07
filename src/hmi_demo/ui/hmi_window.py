@@ -75,6 +75,13 @@ class HMIWindow(QMainWindow):
         self.timer.setInterval(int(1000 / cfg.sim.control_hz))
         self.timer.timeout.connect(self._tick)
         self.timer.start()
+
+        from hmi_demo.vision.hand_thread import VisionThread
+        self.vision_thread = VisionThread(cfg.camera, cfg.gesture, parent=self)
+        self.vision_thread.gestureUpdated.connect(self._on_gesture)
+        self.vision_thread.cameraError.connect(self._on_camera_error)
+        self.vision_thread.start()
+
         self._update_status()
 
     def _effective_frozen(self) -> bool:
@@ -152,7 +159,31 @@ class HMIWindow(QMainWindow):
         self.status.setStyleSheet(f"QStatusBar{{background:{bg};color:#fff;font-weight:600;}}")
         self.status.showMessage(label)
 
+    def _on_gesture(self, raised: bool, frame):
+        from PyQt6.QtGui import QPixmap
+        prev_state = self.state
+        self.gesture_frozen = raised
+        self.cam_label.setPixmap(QPixmap.fromImage(frame))
+        if self.state != prev_state or raised != getattr(self, "_last_gesture_logged", None):
+            self._last_gesture_logged = raised
+
+    def _on_camera_error(self, msg: str):
+        self.cam_label.setText(f"NO CAMERA\n{msg}")
+        self.status.showMessage(f"NO CAMERA — {msg}")
+        self.status.setStyleSheet("QStatusBar{background:#444;color:#ddd;}")
+        # gesture_frozen stays False permanently — sim keeps running
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_Escape:
+            self.estop_frozen = not self.estop_frozen
+            self._update_status()
+            return
+        super().keyPressEvent(event)
+
     def closeEvent(self, event):
         self.timer.stop()
+        if hasattr(self, "vision_thread"):
+            self.vision_thread.request_stop()
+            self.vision_thread.wait(2000)
         self.renderer.close()
         super().closeEvent(event)

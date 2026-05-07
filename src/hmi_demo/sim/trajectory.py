@@ -23,11 +23,9 @@ class CircleTrajectory:
         self.radius = float(radius)
         self.omega = float(omega)
         self.t = 0.0
-        self.frozen = False
 
     def tick(self, dt: float) -> np.ndarray:
-        if not self.frozen:
-            self.t += dt
+        self.t += dt
         return self.position()
 
     def position(self) -> np.ndarray:

@@ -9,20 +9,27 @@ def diff_ik_dls(
     data: mujoco.MjData,
     site_id: int,
     x_target: np.ndarray,
-    damping: float = 0.05,
-    kp: float = 2.0,
+    *,
+    damping: float,
+    kp: float,
 ) -> np.ndarray:
     """One-step differential IK with damped least squares.
 
     Returns absolute joint position command (length nq), clipped to joint limits.
     Only the 3-DOF position error is used; orientation is not constrained.
     """
+    if model.nq != model.nv:
+        raise ValueError(
+            f"diff_ik_dls assumes nq == nv (hinge-only model), "
+            f"but got nq={model.nq}, nv={model.nv}. "
+            f"Free or ball joints require a different IK formulation."
+        )
     nq = model.nq
     nv = model.nv
 
     x_current = np.asarray(data.site_xpos[site_id], dtype=float)
     err = np.asarray(x_target, dtype=float) - x_current
-    v_des = kp * err  # 3-vector
+    v_des = kp * err
 
     Jp = np.zeros((3, nv))
     Jr = np.zeros((3, nv))

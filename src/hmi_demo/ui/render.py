@@ -7,8 +7,9 @@ import numpy as np
 from PyQt6.QtGui import QImage
 
 
-@dataclass(frozen=True)
+@dataclass(eq=False)
 class SphereGeom:
+    """Render-time sphere spec. Not frozen / hashable: numpy fields break dataclass-derived __hash__."""
     pos: np.ndarray   # shape (3,), world coordinates
     rgba: np.ndarray  # shape (4,), values in [0, 1]
     radius: float

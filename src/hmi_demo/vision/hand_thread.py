@@ -163,10 +163,12 @@ class VisionThread(QThread):
                     palm_stable = self._palm_filter.update(raw == "open_palm")
                     fist_stable = self._fist_filter.update(raw == "closed_fist")
 
-                    if palm_stable:
-                        stable_name = "open_palm"
-                    elif fist_stable:
+                    # Priority mirrors _evaluate (fist > palm): a fully-curled hand
+                    # should never be ambiguously latched as open_palm.
+                    if fist_stable:
                         stable_name = "closed_fist"
+                    elif palm_stable:
+                        stable_name = "open_palm"
                     else:
                         stable_name = ""
 

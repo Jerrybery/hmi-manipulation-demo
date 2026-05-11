@@ -47,8 +47,6 @@ def is_closed_fist(landmarks: np.ndarray) -> bool:
     trigger the fist detector — a hand only counts as a fist when fingertips are
     decisively pulled in toward the palm.
     """
-    if landmarks.shape[0] < 21:
-        return False
     wrist = landmarks[WRIST]
     for tip, mcp in zip(FINGERTIPS, FINGER_MCPS):
         d_tip = np.linalg.norm(landmarks[tip] - wrist)

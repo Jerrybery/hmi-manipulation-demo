@@ -128,7 +128,13 @@ def test_is_closed_fist_false_for_partial_curl():
     assert is_closed_fist(lm) is False
 
 
-def test_is_closed_fist_false_for_undersized_landmarks():
+def test_is_closed_fist_false_in_slack_zone():
+    """Fingertips inside MCP distance but not aggressive enough to clear the 0.9 slack."""
     from hmi_demo.utils.gesture import is_closed_fist
-    import numpy as np
-    assert is_closed_fist(np.zeros((10, 3))) is False
+    lm = _open_palm_facing_camera_landmarks()
+    wrist = lm[0]
+    for tip, mcp in ((8, 5), (12, 9), (16, 13), (20, 17)):
+        d_mcp = np.linalg.norm(lm[mcp] - wrist)
+        direction = (lm[mcp] - wrist) / d_mcp
+        lm[tip] = wrist + 0.92 * d_mcp * direction
+    assert is_closed_fist(lm) is False

@@ -43,8 +43,8 @@ class IKConfig:
 
 @dataclass(frozen=True)
 class GripperConfig:
-    open_ctrl: float
-    close_ctrl: float
+    open_ctrl: int
+    close_ctrl: int
 
 
 @dataclass(frozen=True)
@@ -105,6 +105,14 @@ def load_config(path: str | Path) -> Config:
             f"recovery.unload_pose must have exactly 6 elements, got {len(unload_pose)}"
         )
 
+    color_near = tuple(float(v) for v in raw["trajectory_preview"]["color_near"])
+    color_far = tuple(float(v) for v in raw["trajectory_preview"]["color_far"])
+    for name, tup in (("color_near", color_near), ("color_far", color_far)):
+        if len(tup) != 3:
+            raise ValueError(
+                f"trajectory_preview.{name} must have exactly 3 elements (RGB), got {len(tup)}"
+            )
+
     return Config(
         sim=SimConfig(**raw["sim"]),
         trajectory=TrajectoryConfig(
@@ -117,13 +125,13 @@ def load_config(path: str | Path) -> Config:
             n_samples=int(raw["trajectory_preview"]["n_samples"]),
             sphere_radius=float(raw["trajectory_preview"]["sphere_radius"]),
             alpha=float(raw["trajectory_preview"]["alpha"]),
-            color_near=tuple(float(v) for v in raw["trajectory_preview"]["color_near"]),
-            color_far=tuple(float(v) for v in raw["trajectory_preview"]["color_far"]),
+            color_near=color_near,
+            color_far=color_far,
         ),
         ik=IKConfig(**raw["ik"]),
         gripper=GripperConfig(
-            open_ctrl=float(raw["gripper"]["open_ctrl"]),
-            close_ctrl=float(raw["gripper"]["close_ctrl"]),
+            open_ctrl=int(raw["gripper"]["open_ctrl"]),
+            close_ctrl=int(raw["gripper"]["close_ctrl"]),
         ),
         camera=CameraConfig(**raw["camera"]),
         gesture=GestureConfig(**raw["gesture"]),

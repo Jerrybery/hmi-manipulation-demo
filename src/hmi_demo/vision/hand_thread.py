@@ -16,6 +16,7 @@ from PyQt6.QtGui import QImage
 from hmi_demo.config import CameraConfig, GestureConfig
 from hmi_demo.utils.gesture import (
     HysteresisFilter,
+    is_closed_fist,
     is_open_hand,
     is_palm_facing_camera,
 )
@@ -54,7 +55,9 @@ def _ensure_hand_landmarker_model() -> Path:
 
 
 class VisionThread(QThread):
-    gestureUpdated = pyqtSignal(bool, QImage)
+    # Emits the currently-latched gesture name ("open_palm" / "closed_fist" / "") and the annotated frame.
+    # Empty string means no stable gesture.
+    gestureUpdated = pyqtSignal(str, QImage)
     cameraError = pyqtSignal(str)
 
     def __init__(self, cam_cfg: CameraConfig, gesture_cfg: GestureConfig, parent=None):
@@ -62,7 +65,8 @@ class VisionThread(QThread):
         self.cam_cfg = cam_cfg
         self.gesture_cfg = gesture_cfg
         self._stop = False
-        self._filter = HysteresisFilter(hold_frames=gesture_cfg.hold_frames)
+        self._palm_filter = HysteresisFilter(hold_frames=gesture_cfg.hold_frames)
+        self._fist_filter = HysteresisFilter(hold_frames=gesture_cfg.hold_frames)
         self._mp_failures = 0
 
     def request_stop(self) -> None:
@@ -153,30 +157,47 @@ class VisionThread(QThread):
                             return
                         continue
 
-                    raw_raised = self._evaluate(result)
-                    stable = self._filter.update(raw_raised)
+                    raw = self._evaluate(result)
+                    # Each gesture has its own filter so transitioning between gestures
+                    # doesn't bleed across hysteresis windows.
+                    palm_stable = self._palm_filter.update(raw == "open_palm")
+                    fist_stable = self._fist_filter.update(raw == "closed_fist")
+
+                    if palm_stable:
+                        stable_name = "open_palm"
+                    elif fist_stable:
+                        stable_name = "closed_fist"
+                    else:
+                        stable_name = ""
+
                     annotated = self._annotate(rgb, result)
                     qimg = self._to_qimage(annotated)
-
-                    self.gestureUpdated.emit(stable, qimg)
+                    self.gestureUpdated.emit(stable_name, qimg)
         finally:
             cap.release()
 
-    def _evaluate(self, result) -> bool:
+    def _evaluate(self, result) -> str:
         if not result.hand_landmarks:
-            return False
+            return ""
         landmarks_list = result.hand_landmarks[0]
         lm = np.array([[p.x, p.y, p.z] for p in landmarks_list])
-        if not is_open_hand(lm):
-            return False
-        if self.gesture_cfg.enable_palm_check:
-            handedness_label = "Right"
-            if result.handedness:
-                raw = result.handedness[0][0].category_name
-                handedness_label = "Left" if raw == "Right" else "Right"
-            if not is_palm_facing_camera(lm, handedness_label):
-                return False
-        return True
+
+        # Closed fist takes priority if enabled — a strongly curled hand should not
+        # be ambiguously read as "almost open" by is_open_hand if both happened to be False.
+        if self.gesture_cfg.enable_fist_resume and is_closed_fist(lm):
+            return "closed_fist"
+
+        if is_open_hand(lm):
+            if self.gesture_cfg.enable_palm_check:
+                handedness_label = "Right"
+                if result.handedness:
+                    raw = result.handedness[0][0].category_name
+                    handedness_label = "Left" if raw == "Right" else "Right"
+                if not is_palm_facing_camera(lm, handedness_label):
+                    return ""
+            return "open_palm"
+
+        return ""
 
     def _annotate(self, rgb: np.ndarray, result) -> np.ndarray:
         annotated = rgb.copy()

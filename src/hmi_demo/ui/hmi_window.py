@@ -172,8 +172,8 @@ class HMIWindow(QMainWindow):
         self.status.setStyleSheet(f"QStatusBar{{background:{bg};color:#fff;font-weight:600;}}")
         self.status.showMessage(label)
 
-    def _on_gesture(self, raised: bool, frame):
-        self.gesture_frozen = raised
+    def _on_gesture(self, gesture_name: str, frame):
+        self.gesture_frozen = (gesture_name == "open_palm")
         self.cam_label.setPixmap(QPixmap.fromImage(frame))
 
     def _on_camera_error(self, msg: str):

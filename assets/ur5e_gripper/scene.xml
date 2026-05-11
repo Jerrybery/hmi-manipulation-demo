@@ -1,0 +1,265 @@
+<mujoco model="ur5e">
+  <compiler angle="radian" meshdir="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/universal_robots_ur5e/assets/"/>
+
+  <option integrator="implicitfast"/>
+
+  <size nkey="2"/>
+
+  <default>
+    <default class="ur5e">
+      <material shininess="0.25"/>
+      <joint range="-6.28319 6.28319" armature="0.1"/>
+      <site size="0.001 0.005 0.005" group="4" rgba="0.5 0.5 0.5 0.3"/>
+      <general ctrlrange="-6.2831 6.2831" forcerange="-150 150" biastype="affine" gainprm="2000" biasprm="0 -2000 -400"/>
+      <default class="size3">
+        <default class="size3_limited">
+          <joint range="-3.1415 3.1415"/>
+          <general ctrlrange="-3.1415 3.1415"/>
+        </default>
+      </default>
+      <default class="size1">
+        <general forcerange="-28 28" gainprm="500" biasprm="0 -500 -100"/>
+      </default>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+      </default>
+      <default class="collision">
+        <geom type="capsule" group="3"/>
+        <default class="eef_collision">
+          <geom type="cylinder"/>
+        </default>
+      </default>
+    </default>
+    <default class="gripper_main">
+      <default class="gripper_2f85">
+        <mesh scale="0.001 0.001 0.001"/>
+        <general biastype="affine"/>
+        <default class="gripper_driver">
+          <joint solreflimit="0.005" solimplimit="0.95 0.99" range="0 0.9" armature="0.005" damping="0.1"/>
+        </default>
+        <default class="gripper_follower">
+          <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-0.872664 0.9" armature="0.001"/>
+        </default>
+        <default class="gripper_spring_link">
+          <joint springref="2.62" stiffness="0.05" range="-0.296706 0.9" armature="0.001" damping="0.00125"/>
+        </default>
+        <default class="gripper_coupler">
+          <joint solreflimit="0.005" solimplimit="0.95 0.99" range="-1.57 0" armature="0.001"/>
+        </default>
+        <default class="gripper_visual">
+          <geom type="mesh" contype="0" conaffinity="0" group="2" material="black"/>
+        </default>
+        <default class="gripper_collision">
+          <geom type="mesh" group="3"/>
+          <default class="gripper_pad_box1">
+            <geom size="0.002 0.011 0.009375" type="box" priority="1" friction="0.7" solref="0.004" solimp="0.95 0.99" rgba="0.55 0.55 0.55 1"/>
+          </default>
+          <default class="gripper_pad_box2">
+            <geom size="0.002 0.011 0.009375" type="box" priority="1" friction="0.6" solref="0.004" solimp="0.95 0.99" rgba="0.45 0.45 0.45 1"/>
+          </default>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <asset>
+    <material name="black" class="ur5e" rgba="0.033 0.033 0.033 1"/>
+    <material name="jointgray" class="ur5e" rgba="0.278 0.278 0.278 1"/>
+    <material name="linkgray" class="ur5e" rgba="0.82 0.82 0.82 1"/>
+    <material name="urblue" class="ur5e" rgba="0.49 0.678 0.8 1"/>
+    <material name="gripper_metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="gripper_silicone" rgba="0.1882 0.1882 0.1882 1"/>
+    <material name="gripper_black" rgba="0.149 0.149 0.149 1"/>
+    <mesh name="base_0" file="base_0.obj"/>
+    <mesh name="base_1" file="base_1.obj"/>
+    <mesh name="shoulder_0" file="shoulder_0.obj"/>
+    <mesh name="shoulder_1" file="shoulder_1.obj"/>
+    <mesh name="shoulder_2" file="shoulder_2.obj"/>
+    <mesh name="upperarm_0" file="upperarm_0.obj"/>
+    <mesh name="upperarm_1" file="upperarm_1.obj"/>
+    <mesh name="upperarm_2" file="upperarm_2.obj"/>
+    <mesh name="upperarm_3" file="upperarm_3.obj"/>
+    <mesh name="forearm_0" file="forearm_0.obj"/>
+    <mesh name="forearm_1" file="forearm_1.obj"/>
+    <mesh name="forearm_2" file="forearm_2.obj"/>
+    <mesh name="forearm_3" file="forearm_3.obj"/>
+    <mesh name="wrist1_0" file="wrist1_0.obj"/>
+    <mesh name="wrist1_1" file="wrist1_1.obj"/>
+    <mesh name="wrist1_2" file="wrist1_2.obj"/>
+    <mesh name="wrist2_0" file="wrist2_0.obj"/>
+    <mesh name="wrist2_1" file="wrist2_1.obj"/>
+    <mesh name="wrist2_2" file="wrist2_2.obj"/>
+    <mesh name="wrist3" file="wrist3.obj"/>
+    <mesh name="gripper_base" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/base.stl"/>
+    <mesh name="gripper_base_coupling" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/base_coupling.stl"/>
+    <mesh name="gripper_c-a01-85-open" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/c-a01-85-open.stl"/>
+    <mesh name="gripper_driver" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/driver.stl"/>
+    <mesh name="gripper_coupler" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/coupler.stl"/>
+    <mesh name="gripper_spring_link" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/spring_link.stl"/>
+    <mesh name="gripper_follower" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/follower.stl"/>
+    <mesh name="gripper_tongue" file="/Users/jerry/code/hmi-manipulation-demo/assets/mujoco_menagerie/robotiq_2f85_v4/assets/tongue.stl"/>
+  </asset>
+
+  <worldbody>
+    <light name="spotlight" target="wrist_2_link" pos="0 -1 2" dir="0 0 -1" mode="targetbodycom"/>
+    <body name="base" childclass="ur5e" quat="0 0 0 -1">
+      <inertial pos="0 0 0" mass="4" diaginertia="0.00443333 0.00443333 0.0072"/>
+      <geom class="visual" material="black" mesh="base_0"/>
+      <geom class="visual" material="jointgray" mesh="base_1"/>
+      <body name="shoulder_link" pos="0 0 0.163">
+        <inertial pos="0 0 0" mass="3.7" diaginertia="0.0102675 0.0102675 0.00666"/>
+        <joint name="shoulder_pan_joint" class="size3" pos="0 0 0" axis="0 0 1"/>
+        <geom class="visual" material="urblue" mesh="shoulder_0"/>
+        <geom class="visual" material="black" mesh="shoulder_1"/>
+        <geom class="visual" material="jointgray" mesh="shoulder_2"/>
+        <geom class="collision" size="0.06 0.06" pos="0 0 -0.04"/>
+        <body name="upper_arm_link" pos="0 0.138 0" quat="0.707107 0 0.707107 0">
+          <inertial pos="0 0 0.2125" mass="8.393" diaginertia="0.133886 0.133886 0.0151074"/>
+          <joint name="shoulder_lift_joint" class="size3" pos="0 0 0" axis="0 1 0"/>
+          <geom class="visual" material="linkgray" mesh="upperarm_0"/>
+          <geom class="visual" material="black" mesh="upperarm_1"/>
+          <geom class="visual" material="jointgray" mesh="upperarm_2"/>
+          <geom class="visual" material="urblue" mesh="upperarm_3"/>
+          <geom class="collision" size="0.06 0.06" pos="0 -0.04 0" quat="0.707107 0.707107 0 0"/>
+          <geom class="collision" size="0.05 0.2" pos="0 0 0.2"/>
+          <body name="forearm_link" pos="0 -0.131 0.425">
+            <inertial pos="0 0 0.196" mass="2.275" diaginertia="0.0311796 0.0311796 0.004095"/>
+            <joint name="elbow_joint" class="size3_limited" pos="0 0 0" axis="0 1 0"/>
+            <geom class="visual" material="urblue" mesh="forearm_0"/>
+            <geom class="visual" material="linkgray" mesh="forearm_1"/>
+            <geom class="visual" material="black" mesh="forearm_2"/>
+            <geom class="visual" material="jointgray" mesh="forearm_3"/>
+            <geom class="collision" size="0.055 0.06" pos="0 0.08 0" quat="0.707107 0.707107 0 0"/>
+            <geom class="collision" size="0.038 0.19" pos="0 0 0.2"/>
+            <body name="wrist_1_link" pos="0 0 0.392" quat="0.707107 0 0.707107 0">
+              <inertial pos="0 0.127 0" mass="1.219" diaginertia="0.0025599 0.0025599 0.0021942"/>
+              <joint name="wrist_1_joint" class="size1" pos="0 0 0" axis="0 1 0"/>
+              <geom class="visual" material="black" mesh="wrist1_0"/>
+              <geom class="visual" material="urblue" mesh="wrist1_1"/>
+              <geom class="visual" material="jointgray" mesh="wrist1_2"/>
+              <geom class="collision" size="0.04 0.07" pos="0 0.05 0" quat="0.707107 0.707107 0 0"/>
+              <body name="wrist_2_link" pos="0 0.127 0">
+                <inertial pos="0 0 0.1" mass="1.219" diaginertia="0.0025599 0.0025599 0.0021942"/>
+                <joint name="wrist_2_joint" class="size1" pos="0 0 0" axis="0 0 1"/>
+                <geom class="visual" material="black" mesh="wrist2_0"/>
+                <geom class="visual" material="urblue" mesh="wrist2_1"/>
+                <geom class="visual" material="jointgray" mesh="wrist2_2"/>
+                <geom class="collision" size="0.04 0.06" pos="0 0 0.04"/>
+                <geom class="collision" size="0.04 0.04" pos="0 0.02 0.1" quat="0.707107 0.707107 0 0"/>
+                <body name="wrist_3_link" pos="0 0 0.1">
+                  <inertial pos="0 0.0771683 0" quat="0.707107 0 0 0.707107" mass="0.1889" diaginertia="0.000132134 9.90863e-05 9.90863e-05"/>
+                  <joint name="wrist_3_joint" class="size1" pos="0 0 0" axis="0 1 0"/>
+                  <geom class="visual" material="linkgray" mesh="wrist3"/>
+                  <geom class="eef_collision" size="0.04 0.02" pos="0 0.08 0" quat="0.707107 0.707107 0 0"/>
+                  <site name="attachment_site" pos="0 0.1 0" quat="-0.707107 0.707107 0 0"/>
+                  <body name="gripper_base" childclass="gripper_2f85" pos="0 0.1 0" quat="-0.707107 0.707107 0 0">
+                    <inertial pos="7.77116e-05 8.42713e-05 0.0311656" quat="0.704758 -0.00373684 -0.00570287 0.709415" mass="0.777441" diaginertia="0.000260285 0.000225381 0.000152708"/>
+                    <geom class="gripper_visual" pos="0 0 0.0108" quat="0 0 0 1" material="gripper_black" mesh="gripper_base"/>
+                    <geom class="gripper_visual" pos="0 0 0.004" quat="0.707107 -0.707107 0 0" material="gripper_black" mesh="gripper_base_coupling"/>
+                    <geom class="gripper_visual" pos="0 0 0.0108" quat="1 0 0 0" material="gripper_metal" mesh="gripper_c-a01-85-open"/>
+                    <geom class="gripper_collision" pos="0 0 0.0108" quat="0 0 0 1" mesh="gripper_base"/>
+                    <body name="gripper_left_driver" pos="-0.0306011 0.00475 0.0657045" quat="0.707107 -0.707107 0 0">
+                      <inertial pos="-0.0175297 0.00165308 -0.00469625" quat="-0.469642 0.469642 -0.528617 0.528617" mass="0.00899563" diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                      <joint name="gripper_left_driver_joint" class="gripper_driver" pos="0 0 0" axis="0 0 1"/>
+                      <geom class="gripper_visual" pos="0.0306011 0.0549045 -0.0047" quat="0.707107 0.707107 0 0" material="gripper_metal" mesh="gripper_driver"/>
+                      <geom class="gripper_collision" pos="0.0306011 0.0549045 -0.0047" quat="0.707107 0.707107 0 0" mesh="gripper_driver"/>
+                      <body name="gripper_left_coupler" pos="-0.0314249 0.00453223 -0.0102" quat="0 0 0 1">
+                        <inertial pos="0.00367747 0.01986 0.0055" quat="0.701447 -0.701447 0.0892884 -0.0892884" mass="0.0140974" diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                        <geom class="gripper_visual" pos="-0.062026 -0.0503723 0.0055" quat="0.707107 -0.707107 0 0" material="gripper_black" mesh="gripper_coupler"/>
+                        <geom class="gripper_collision" pos="-0.062026 -0.0503723 0.0055" quat="0.707107 -0.707107 0 0" mesh="gripper_coupler"/>
+                      </body>
+                    </body>
+                    <body name="gripper_left_spring_link" pos="-0.0127 -0.012 0.07222" quat="0.707107 -0.707107 0 0">
+                      <inertial pos="-0.0183 -0.0205732 0.01205" quat="0.660942 0.660942 -0.251309 -0.251309" mass="0.0221642" diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                      <joint name="gripper_left_spring_link_joint" class="gripper_spring_link" pos="0 0 0" axis="0 0 1" springref="2.62"/>
+                      <geom class="gripper_visual" pos="0.0127 0.06142 0.01205" quat="0.707107 0.707107 0 0" material="gripper_black" mesh="gripper_spring_link"/>
+                      <geom class="gripper_collision" pos="0.0127 0.06142 0.01205" quat="0.707107 0.707107 0 0" mesh="gripper_spring_link"/>
+                      <body name="gripper_left_follower" pos="-0.0382079 -0.0425003 0.00295" quat="0 -1 -1.90231e-05 0">
+                        <inertial pos="-0.00852976 -0.0014822 -0.00910001" quat="0.359439 0.359439 0.608937 0.608937" mass="0.0125222" diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                        <joint name="gripper_left_follower" class="gripper_follower" pos="0 0 0" axis="0 0 1"/>
+                        <geom class="gripper_visual" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" material="gripper_black" mesh="gripper_follower"/>
+                        <geom class="gripper_visual" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" material="gripper_metal" mesh="gripper_tongue"/>
+                        <geom class="gripper_collision" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" mesh="gripper_follower"/>
+                        <geom class="gripper_collision" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" mesh="gripper_tongue"/>
+                        <body name="gripper_left_pad" pos="-0.0377897 -0.103916 -0.0091" quat="0.707107 -0.707107 0 0">
+                          <geom name="gripper_left_pad1" class="gripper_pad_box1" pos="0.043258 0 0.12" mass="0.00175"/>
+                          <geom name="gripper_left_pad2" class="gripper_pad_box2" pos="0.043258 0 0.13875" mass="0.00175"/>
+                        </body>
+                      </body>
+                    </body>
+                    <body name="gripper_right_driver" pos="0.0306011 -0.00475 0.0657045" quat="0 0 -0.707107 0.707107">
+                      <inertial pos="-0.0175297 0.00165308 -0.00469625" quat="-0.469642 0.469642 -0.528617 0.528617" mass="0.00899563" diaginertia="1.72352e-06 1.60906e-06 3.22006e-07"/>
+                      <joint name="gripper_right_driver_joint" class="gripper_driver" pos="0 0 0" axis="0 0 1"/>
+                      <geom class="gripper_visual" pos="0.0306011 0.0549045 -0.0047" quat="0.707107 0.707107 0 0" material="gripper_metal" mesh="gripper_driver"/>
+                      <geom class="gripper_collision" pos="0.0306011 0.0549045 -0.0047" quat="0.707107 0.707107 0 0" mesh="gripper_driver"/>
+                      <body name="gripper_right_coupler" pos="-0.0314249 0.00453223 -0.0102" quat="0 0 0 1">
+                        <inertial pos="0.00367747 0.01986 0.0055" quat="0.701447 -0.701447 0.0892884 -0.0892884" mass="0.0140974" diaginertia="4.16206e-06 3.52216e-06 8.88131e-07"/>
+                        <geom class="gripper_visual" pos="-0.062026 -0.0503723 0.0055" quat="0.707107 -0.707107 0 0" material="gripper_black" mesh="gripper_coupler"/>
+                        <geom class="gripper_collision" pos="-0.062026 -0.0503723 0.0055" quat="0.707107 -0.707107 0 0" mesh="gripper_coupler"/>
+                      </body>
+                    </body>
+                    <body name="gripper_right_spring_link" pos="0.0127 0.012 0.07222" quat="0 0 -0.707107 0.707107">
+                      <inertial pos="-0.0183 -0.0205732 0.01205" quat="0.660942 0.660942 -0.251309 -0.251309" mass="0.0221642" diaginertia="8.96853e-06 6.71733e-06 2.63931e-06"/>
+                      <joint name="gripper_right_spring_link_joint" class="gripper_spring_link" pos="0 0 0" axis="0 0 1" springref="2.62"/>
+                      <geom class="gripper_visual" pos="0.0127 0.06142 0.01205" quat="0.707107 0.707107 0 0" material="gripper_black" mesh="gripper_spring_link"/>
+                      <geom class="gripper_collision" pos="0.0127 0.06142 0.01205" quat="0.707107 0.707107 0 0" mesh="gripper_spring_link"/>
+                      <body name="gripper_right_follower" pos="-0.0382079 -0.0425003 0.00295" quat="0 -1 0 0">
+                        <inertial pos="-0.00852976 -0.0014822 -0.00910001" quat="0.359439 0.359439 0.608937 0.608937" mass="0.0125222" diaginertia="2.67415e-06 2.4559e-06 6.02031e-07"/>
+                        <joint name="gripper_right_follower_joint" class="gripper_follower" pos="0 0 0" axis="0 0 1"/>
+                        <geom class="gripper_visual" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" material="gripper_metal" mesh="gripper_tongue"/>
+                        <geom class="gripper_visual" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" material="gripper_black" mesh="gripper_follower"/>
+                        <geom class="gripper_collision" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" mesh="gripper_tongue"/>
+                        <geom class="gripper_collision" pos="0.0509079 -0.10392 -0.0091" quat="0.707107 -0.707107 0 0" mesh="gripper_follower"/>
+                        <body name="gripper_right_pad" pos="-0.0377897 -0.103916 -0.0091" quat="0.707107 -0.707107 0 0">
+                          <geom name="gripper_right_pad1" class="gripper_pad_box1" pos="0.043258 0 0.12" mass="0.00175"/>
+                          <geom name="gripper_right_pad2" class="gripper_pad_box2" pos="0.043258 0 0.13875" mass="0.00175"/>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <exclude body1="gripper_base" body2="gripper_left_driver"/>
+    <exclude body1="gripper_base" body2="gripper_left_spring_link"/>
+    <exclude body1="gripper_base" body2="gripper_right_driver"/>
+    <exclude body1="gripper_base" body2="gripper_right_spring_link"/>
+    <exclude body1="gripper_left_coupler" body2="gripper_left_follower"/>
+    <exclude body1="gripper_right_coupler" body2="gripper_right_follower"/>
+  </contact>
+
+  <equality>
+    <connect body1="gripper_right_follower" body2="gripper_right_coupler" anchor="-0.0179014 -0.00651468 0.0044" solref="0.005" solimp="0.95 0.99"/>
+    <connect body1="gripper_left_follower" body2="gripper_left_coupler" anchor="-0.0179014 -0.00651468 0.0044" solref="0.005" solimp="0.95 0.99"/>
+    <joint joint1="gripper_right_driver_joint" joint2="gripper_left_driver_joint" polycoef="0 1 0 0 0" solref="0.005" solimp="0.95 0.99"/>
+  </equality>
+
+  <tendon>
+    <fixed name="gripper_split">
+      <joint joint="gripper_right_driver_joint" coef="0.485"/>
+      <joint joint="gripper_left_driver_joint" coef="0.485"/>
+    </fixed>
+  </tendon>
+
+  <actuator>
+    <general name="shoulder_pan" class="size3" joint="shoulder_pan_joint"/>
+    <general name="shoulder_lift" class="size3" joint="shoulder_lift_joint"/>
+    <general name="elbow" class="size3_limited" joint="elbow_joint"/>
+    <general name="wrist_1" class="size1" joint="wrist_1_joint"/>
+    <general name="wrist_2" class="size1" joint="wrist_2_joint"/>
+    <general name="wrist_3" class="size1" joint="wrist_3_joint"/>
+    <general name="gripper_fingers_actuator" class="gripper_2f85" tendon="gripper_split" ctrlrange="0 255" forcerange="-5 5" gainprm="0.313725" biasprm="0 -100 -10"/>
+  </actuator>
+
+  <keyframe>
+    <key name="home" qpos="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0 0 0 0 0 0 0" ctrl="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0 0"/>
+    <key name="unload" qpos="0 -1.5708 1.5708 -1.5708 0 0 0 0 0 0 0 0" ctrl="0 -1.5708 1.5708 -1.5708 0 0 0"/>
+  </keyframe>
+</mujoco>

@@ -23,12 +23,26 @@ class MujocoRenderer:
         model: mujoco.MjModel,
         width: int = 640,
         height: int = 480,
-        camera: str | int = -1,
+        camera: str | int | mujoco.MjvCamera | None = None,
     ):
         self.width = width
         self.height = height
-        self.camera = camera
         self._renderer = mujoco.Renderer(model, height=height, width=width)
+        if camera is None:
+            # MuJoCo's auto free-camera frames the model's geometric center, which for
+            # UR5e + gripper sits low and clips the wrist/gripper out of a 640x480 view.
+            # Pull back to 2.2 m with a 25° downward gaze focused at the table-top
+            # workspace (~0.5 m forward of the base) so the whole arm + gripper + the
+            # trajectory preview spheres fit in frame.
+            cam = mujoco.MjvCamera()
+            cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+            cam.lookat[:] = [0.3, 0.0, 0.4]
+            cam.distance = 2.2
+            cam.azimuth = 135.0
+            cam.elevation = -25.0
+            self.camera = cam
+        else:
+            self.camera = camera
 
     def grab(self, data: mujoco.MjData, extra_geoms: list[SphereGeom] | None = None) -> QImage:
         self._renderer.update_scene(data, camera=self.camera)

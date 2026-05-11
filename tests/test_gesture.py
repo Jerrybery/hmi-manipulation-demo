@@ -94,3 +94,41 @@ def test_hysteresis_resets_streak_on_inconsistent_input():
     for _ in range(4):
         assert f.update(True) is False
     assert f.update(True) is True
+
+
+def _closed_fist_landmarks() -> np.ndarray:
+    """21 hand landmarks for a closed fist: fingertips collapsed toward wrist."""
+    lm = _open_palm_facing_camera_landmarks()
+    wrist = lm[0]
+    # Pull each fingertip to 30% of the way between MCP and wrist (well inside MCP distance)
+    for tip, mcp in ((8, 5), (12, 9), (16, 13), (20, 17)):
+        lm[tip] = wrist + 0.3 * (lm[mcp] - wrist)
+    return lm
+
+
+def test_is_closed_fist_true_for_fist():
+    from hmi_demo.utils.gesture import is_closed_fist
+    lm = _closed_fist_landmarks()
+    assert is_closed_fist(lm) is True
+
+
+def test_is_closed_fist_false_for_open_hand():
+    from hmi_demo.utils.gesture import is_closed_fist
+    lm = _open_palm_facing_camera_landmarks()
+    assert is_closed_fist(lm) is False
+
+
+def test_is_closed_fist_false_for_partial_curl():
+    """One finger still extended → not a fist."""
+    from hmi_demo.utils.gesture import is_closed_fist
+    lm = _closed_fist_landmarks()
+    # Restore index finger to its original (extended) position
+    extended = _open_palm_facing_camera_landmarks()
+    lm[8] = extended[8]
+    assert is_closed_fist(lm) is False
+
+
+def test_is_closed_fist_false_for_undersized_landmarks():
+    from hmi_demo.utils.gesture import is_closed_fist
+    import numpy as np
+    assert is_closed_fist(np.zeros((10, 3))) is False

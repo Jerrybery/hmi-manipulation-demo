@@ -39,6 +39,25 @@ def is_open_hand(landmarks: np.ndarray) -> bool:
     return True
 
 
+def is_closed_fist(landmarks: np.ndarray) -> bool:
+    """True iff every (non-thumb) fingertip is closer to the wrist than its MCP.
+
+    Mirrors `is_open_hand`: fingers curled inward → tip moves closer to wrist than MCP.
+    A small slack factor (0.9x) is required so a relaxed/neutral hand pose does not
+    trigger the fist detector — a hand only counts as a fist when fingertips are
+    decisively pulled in toward the palm.
+    """
+    if landmarks.shape[0] < 21:
+        return False
+    wrist = landmarks[WRIST]
+    for tip, mcp in zip(FINGERTIPS, FINGER_MCPS):
+        d_tip = np.linalg.norm(landmarks[tip] - wrist)
+        d_mcp = np.linalg.norm(landmarks[mcp] - wrist)
+        if d_tip >= 0.9 * d_mcp:
+            return False
+    return True
+
+
 class HysteresisFilter:
     def __init__(self, hold_frames: int = 5):
         if hold_frames < 1:

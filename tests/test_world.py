@@ -7,10 +7,10 @@ from hmi_demo.sim.world import World
 def test_world_loads_and_steps_without_nan(demo_yaml_path):
     cfg = load_config(demo_yaml_path)
     world = World(cfg.sim)
-    assert world.model.nq == 6
-    assert world.model.nu == 6
+    assert world.model.nq == 12
+    assert world.model.nu == 7
     assert world.ee_site_id >= 0
-    assert world.q_home.shape == (6,)
+    assert world.q_home.shape == (12,)
     world.reset_to_home()
     for _ in range(100):
         world.step()
